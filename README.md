@@ -1,6 +1,8 @@
 Source Generators Toolkit
 =========================
 
+![Nuget](https://img.shields.io/nuget/v/SourceGeneratorsKit)
+
 Toolkit for writing source generators, and specifically collect important information about project to aid generation itself.
 
 # Getting started
