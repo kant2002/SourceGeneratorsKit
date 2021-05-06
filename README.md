@@ -127,3 +127,50 @@ public class MagicGenerator : ISourceGenerator
     }
 }
 ```
+
+# Work with multiple receivers
+
+```
+[Generator]
+public class AggregateMagicGenerator : ISourceGenerator
+{
+    SyntaxReceiver syntaxReceiver1 = new MethodsWithAttributeReceiver("MagicAttribute");
+    SyntaxReceiver syntaxReceiver2 = new DerivedClassesReceiver("DbConnection");
+    SyntaxReceiver agregateSyntaxReceiver;
+
+    public MagicGenerator()
+    {
+        this.agregateSyntaxReceiver = new AggregateSyntaxContextReceiver(this.syntaxReceiver1, this.syntaxReceiver2);
+    }
+
+    /// <inheritdoc/>
+    public void Initialize(GeneratorInitializationContext context)
+    {
+        context.RegisterForSyntaxNotifications(() => agregateSyntaxReceiver);
+    }
+
+    public void Execute(GeneratorExecutionContext context)
+    {
+        // Retrieve the populated receiver
+        if (!(context.SyntaxContextReceiver is SyntaxReceiver receiver))
+        {
+            return;
+        }
+
+        foreach (IMethodSymbol methodSymbol in this.syntaxReceiver1.Methods)
+        {
+            // process your method here.
+            var parameters = methodSymbol.Parameters;
+            foreach (var parameter in parameters)
+            {
+                // Do your parameter magic here.
+            }
+        }
+
+        foreach (INamedTypeSymbol classSymbol in this.syntaxReceiver2.Classes)
+        {
+            // process your class here.
+        }
+    }
+}
+```
